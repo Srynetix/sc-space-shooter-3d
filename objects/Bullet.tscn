@@ -1,0 +1,123 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://scripts/Bullet.cs" type="Script" id=1]
+[ext_resource path="res://resources/textures/spark_01.png" type="Texture" id=2]
+[ext_resource path="res://resources/textures/smoke_01.png" type="Texture" id=3]
+
+[sub_resource type="CapsuleMesh" id=1]
+radius = 0.25
+mid_height = 2.0
+radial_segments = 16
+
+[sub_resource type="SpatialMaterial" id=2]
+flags_unshaded = true
+flags_ensure_correct_normals = true
+vertex_color_use_as_albedo = true
+params_blend_mode = 1
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_texture = ExtResource( 2 )
+
+[sub_resource type="Gradient" id=3]
+offsets = PoolRealArray( 0, 0.793103, 1 )
+colors = PoolColorArray( 0, 0.968359, 1, 1, 0.709804, 0.992157, 1, 1, 1, 1, 1, 0 )
+
+[sub_resource type="GradientTexture" id=4]
+gradient = SubResource( 3 )
+
+[sub_resource type="Curve" id=5]
+_data = [ Vector2( 0, 0.515201 ), 0.0, 0.0, 0, 0, Vector2( 0.249258, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=6]
+curve = SubResource( 5 )
+
+[sub_resource type="ParticlesMaterial" id=7]
+resource_local_to_scene = true
+emission_shape = 2
+emission_box_extents = Vector3( 0.4, 1.5, 0.4 )
+direction = Vector3( 0, 1, 0 )
+spread = 0.0
+gravity = Vector3( 0, 0, 0 )
+angular_velocity = 100.0
+angular_velocity_random = 1.0
+linear_accel = 1.0
+angle = 360.0
+angle_random = 1.0
+scale = 2.0
+scale_random = 1.0
+scale_curve = SubResource( 6 )
+color_ramp = SubResource( 4 )
+hue_variation_random = 1.0
+
+[sub_resource type="QuadMesh" id=8]
+
+[sub_resource type="SpatialMaterial" id=9]
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+params_blend_mode = 1
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_color = Color( 0, 0.952941, 1, 1 )
+albedo_texture = ExtResource( 3 )
+
+[sub_resource type="Curve" id=10]
+_data = [ Vector2( 0, 0.47177 ), 0.0, 0.0, 0, 0, Vector2( 0.0529945, 1 ), 0.0, 0.0, 0, 0, Vector2( 0.497978, 1 ), -0.130976, -0.130976, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=11]
+curve = SubResource( 10 )
+
+[sub_resource type="ParticlesMaterial" id=12]
+resource_local_to_scene = true
+direction = Vector3( 0, -1, 0 )
+spread = 0.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 6.0
+angular_velocity = 50.0
+angular_velocity_random = 1.0
+angle = 360.0
+angle_random = 1.0
+scale = 2.0
+scale_curve = SubResource( 11 )
+
+[sub_resource type="QuadMesh" id=13]
+
+[sub_resource type="CapsuleShape" id=14]
+radius = 0.25
+height = 2.0
+
+[node name="Bullet" type="Area" groups=[
+"bullet",
+]]
+script = ExtResource( 1 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="VisibilityNotifier" type="VisibilityNotifier" parent="."]
+
+[node name="Trail" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 0, 0 )
+material_override = SubResource( 2 )
+amount = 32
+lifetime = 3.0
+preprocess = 1.0
+speed_scale = 2.0
+process_material = SubResource( 7 )
+draw_pass_1 = SubResource( 8 )
+
+[node name="Smoke" type="Particles" parent="."]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, 1, 0, -1, -1.62921e-07, 0, 0, -1.09613 )
+material_override = SubResource( 9 )
+amount = 16
+preprocess = 1.0
+process_material = SubResource( 12 )
+draw_pass_1 = SubResource( 13 )
+
+[node name="CollisionShape" type="CollisionShape" parent="."]
+shape = SubResource( 14 )
+[connection signal="screen_exited" from="VisibilityNotifier" to="." method="_on_VisibilityNotifier_screen_exited"]
